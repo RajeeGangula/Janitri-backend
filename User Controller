@@ -1,0 +1,28 @@
+package com.janitri.backend.controller;
+
+import com.janitri.backend.model.User;
+import com.janitri.backend.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+    @Autowired
+    private UserRepository userRepository;
+
+    @PostMapping("/register")
+    public User registerUser(@RequestBody User user) {
+        return userRepository.save(user);
+    }
+
+    @PostMapping("/login")
+    public String loginUser(@RequestBody User user) {
+        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+        return existingUser.isPresent() && existingUser.get().getPassword().equals(user.getPassword()) 
+            ? "Login Successful" 
+            : "Invalid Credentials";
+    }
+}
